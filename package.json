@@ -1,0 +1,29 @@
+{
+  "name": "badminton-tournament-regression",
+  "version": "1.0.0",
+  "description": "Playwright TypeScript regression test suite for Badminton Tournament app",
+  "scripts": {
+    "test": "playwright test",
+    "test:headed": "playwright test --headed",
+    "test:ui": "playwright test --ui",
+    "test:debug": "playwright test --debug",
+    "test:report": "playwright show-report",
+    "test:navigation": "playwright test tests/01-navigation.spec.ts",
+    "test:players": "playwright test tests/02-players.spec.ts",
+    "test:teams": "playwright test tests/03-teams.spec.ts",
+    "test:tournament": "playwright test tests/04-tournament.spec.ts",
+    "test:cloud": "playwright test tests/05-cloud.spec.ts",
+    "test:court-booking": "playwright test tests/06-court-booking.spec.ts",
+    "test:stats": "playwright test tests/07-stats.spec.ts",
+    "test:admin": "playwright test tests/08-admin.spec.ts",
+    "test:contact": "playwright test tests/09-contact.spec.ts",
+    "test:responsive": "playwright test tests/10-responsive.spec.ts",
+    "test:pwa": "playwright test tests/11-pwa.spec.ts",
+    "test:accessibility": "playwright test tests/12-accessibility.spec.ts"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.49.0",
+    "@types/node": "^22.0.0",
+    "typescript": "^5.7.0"
+  }
+}
