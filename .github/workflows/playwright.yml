@@ -8,6 +8,8 @@ on:
   schedule:
     - cron: '0 6 * * *'   # daily at 6 AM UTC
   workflow_dispatch:
+  repository_dispatch:
+    types: [app-deployed]  # fired by badminton-tournament on every push to main
 
 jobs:
   test:
@@ -20,6 +22,13 @@ jobs:
     name: Tests — ${{ matrix.browser }}
     steps:
       - uses: actions/checkout@v4
+
+      - name: Show trigger context
+        run: |
+          echo "Triggered by: ${{ github.event_name }}"
+          echo "Source commit: ${{ github.event.client_payload.commit_sha }}"
+          echo "Source message: ${{ github.event.client_payload.commit_message }}"
+          echo "Triggered by user: ${{ github.event.client_payload.triggered_by }}"
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
