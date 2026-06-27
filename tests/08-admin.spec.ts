@@ -21,13 +21,16 @@ test.describe('Admin — Subscriptions', () => {
     expect(isVisible).toBe(false);
   });
 
-  test('Subscription price USD $15 is displayed on page', async ({ page }) => {
-    const a = new AdminSection(page);
-    await a.expectSubscriptionPriceVisible();
+  // USD $15 lives in #subModal (display:none) — verify DOM presence only
+  test('Subscription price USD $15 is in subModal', async ({ page }) => {
+    await expect(page.locator('#subModal')).toBeAttached();
+    await expect(page.locator('#subModal').getByText('USD $15', { exact: false })).toBeAttached();
   });
 
-  test('Subscription duration 12 months is displayed', async ({ page }) => {
-    await expect(page.getByText(SUBSCRIPTION.subscriptionMonths, { exact: false })).toBeVisible();
+  // "12 months" appears in the visible Privacy Notice section
+  test('Subscription duration 12 months is in Privacy Notice', async ({ page }) => {
+    const privacyPanel = page.locator('.panel').filter({ hasText: 'Privacy Notice' });
+    await expect(privacyPanel.getByText(SUBSCRIPTION.subscriptionMonths, { exact: false })).toBeVisible();
   });
 
   test('Refresh admin button (#refreshAdminBtn) is attached', async ({ page }) => {
@@ -38,12 +41,13 @@ test.describe('Admin — Subscriptions', () => {
     await expect(page.locator('#adminSubList')).toBeAttached();
   });
 
-  test('Refund policy text is visible on page', async ({ page }) => {
-    await expect(page.getByText('refund', { exact: false })).toBeVisible();
+  // Refund policy and 3 business days are inside #subModal (display:none)
+  test('Refund policy text is in subModal', async ({ page }) => {
+    await expect(page.locator('#subModal').getByText('Refund policy', { exact: false })).toBeAttached();
   });
 
-  test('3 business days refund window is stated', async ({ page }) => {
-    await expect(page.getByText('3 business days', { exact: false })).toBeVisible();
+  test('3 business days refund window is in subModal', async ({ page }) => {
+    await expect(page.locator('#subModal').getByText('3 business days', { exact: false })).toBeAttached();
   });
 
   // subSubmitBtn lives in subModal (the subscribe modal), which is display:none

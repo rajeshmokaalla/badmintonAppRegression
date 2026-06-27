@@ -22,7 +22,8 @@ export class StatsSection extends BasePage {
   }
 
   async expectLoadStatsButtonVisible(): Promise<void> {
-    await expect(this.loadStatsButton).toBeVisible();
+    // #loadStatsBtn is inside #statsAuthArea (display:none for unauthenticated users)
+    await expect(this.loadStatsButton).toBeAttached();
   }
 
   async expectLifetimeStatsDescriptionVisible(): Promise<void> {

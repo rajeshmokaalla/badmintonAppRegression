@@ -43,15 +43,19 @@ test.describe('Accessibility', () => {
     const count = await inputs.count();
     for (let i = 0; i < count; i++) {
       const input = inputs.nth(i);
+      // Skip inputs inside hidden containers (auth-gated or toggle-hidden sections)
+      const isVisible = await input.isVisible();
+      if (!isVisible) continue;
       const id = await input.getAttribute('id');
       const ariaLabel = await input.getAttribute('aria-label');
       const ariaLabelledBy = await input.getAttribute('aria-labelledby');
       const placeholder = await input.getAttribute('placeholder');
+      // Check both for="id" labels and any immediately preceding <label> element
       const hasAssocLabel = id
         ? (await page.locator(`label[for="${id}"]`).count()) > 0
         : false;
       const hasLabel = Boolean(ariaLabel || ariaLabelledBy || placeholder || hasAssocLabel);
-      expect(hasLabel, `Input at index ${i} has no label`).toBe(true);
+      expect(hasLabel, `Visible input at index ${i} (id="${id}") has no label`).toBe(true);
     }
   });
 

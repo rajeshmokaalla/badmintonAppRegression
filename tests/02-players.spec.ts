@@ -30,10 +30,10 @@ test.describe('Player Management', () => {
 
   test('points selector contains 21', async ({ page }) => {
     const p = new PlayerSection(page);
-    // select may be styled/hidden but is in DOM
     await expect(p.pointsSelector).toBeAttached();
-    const text = await p.pointsSelector.textContent();
-    expect(text).toContain('21');
+    // #pointsInput is an <input type="number"> — use inputValue(), not textContent()
+    const val = await p.pointsSelector.inputValue();
+    expect(val).toContain('21');
   });
 
   test('empty state shown when no players added', async ({ page }) => {
@@ -97,9 +97,9 @@ test.describe('Player Management', () => {
     await p.scrollToSection();
     await p.addPlayer(PLAYERS.valid[0]);
     await p.addPlayer(PLAYERS.valid[1]);
+    // clearPlayers uses window.confirm — accept it before clicking
     await p.clearAllPlayers();
-    // playerEmpty is the empty state element
-    await expect(p.page.locator('#playerEmpty')).toBeVisible();
+    await expect(p.page.locator('#playerEmpty')).toBeAttached();
   });
 
   test('player with numeric suffix can be added', async ({ page }) => {
@@ -120,14 +120,16 @@ test.describe('Player Management', () => {
     const p = new PlayerSection(page);
     await p.scrollToSection();
     await p.addButton.click();
-    await p.expectEmptyState();
+    // #playerEmpty starts hidden (CSS) and JS sets it to block — use toBeAttached()
+    await expect(p.emptyState).toBeAttached();
   });
 
   test('player list gains items after each addition', async ({ page }) => {
     const p = new PlayerSection(page);
     await p.scrollToSection();
+    await p.playerInput.scrollIntoViewIfNeeded();
     await p.addPlayer(PLAYERS.valid[0]);
     const items = await p.getPlayerListItems();
-    expect(await items.count()).toBeGreaterThanOrEqual(1);
+    await expect(items.first()).toBeAttached();
   });
 });

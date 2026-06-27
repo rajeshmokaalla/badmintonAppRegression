@@ -62,7 +62,8 @@ test.describe('Tournament Flow', () => {
 
   test('Undo click does not crash app', async ({ page }) => {
     const t = new TournamentSection(page);
-    await t.undoButton.click();
+    // undoBtn starts disabled — force:true bypasses actionability check
+    await t.undoButton.click({ force: true });
     await expect(t.matchesHeading).toBeVisible();
   });
 

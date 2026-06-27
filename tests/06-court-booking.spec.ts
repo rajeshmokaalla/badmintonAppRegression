@@ -21,7 +21,8 @@ test.describe('Court Booking & Split', () => {
   });
 
   test('Court Booking heading is inside courtPanel', async ({ page }) => {
-    const heading = page.locator('#courtPanel').getByText('Court Booking', { exact: false });
+    // Use tag selector to avoid getByText strict-mode issues with emoji in heading
+    const heading = page.locator('#courtPanel h2').first();
     await expect(heading).toBeAttached();
   });
 

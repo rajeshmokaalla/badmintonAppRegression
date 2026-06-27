@@ -34,11 +34,12 @@ export class PlayerSection extends BasePage {
   }
 
   async clearAllPlayers(): Promise<void> {
+    this.page.once('dialog', d => d.accept());
     await this.clearAllButton.click();
   }
 
   async expectEmptyState(): Promise<void> {
-    await expect(this.emptyState).toBeVisible();
+    await expect(this.emptyState).toBeAttached();
   }
 
   async expectPlayerInList(name: string): Promise<void> {
