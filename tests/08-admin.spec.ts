@@ -2,40 +2,43 @@ import { test, expect } from '@playwright/test';
 import { AdminSection } from '../pages/AdminSection';
 import { SUBSCRIPTION } from '../utils/test-data';
 
+// adminPanel is auth-gated (display:none). Core checks use toBeAttached().
+// Subscription price text and refund policy live outside adminPanel and are visible.
+
 test.describe('Admin — Subscriptions', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('https://rajeshmokaalla.github.io/badminton-tournament/');
     await page.waitForLoadState('networkidle');
   });
 
-  test('Admin Subscriptions section heading is visible', async ({ page }) => {
+  test('adminPanel (#adminPanel) is attached to DOM', async ({ page }) => {
     const a = new AdminSection(page);
-    await a.expectSectionVisible();
+    await a.expectAdminPanelAttached();
   });
 
-  test('Subscription price USD $15 is displayed', async ({ page }) => {
+  test('adminPanel is initially hidden for non-admins', async ({ page }) => {
+    const isVisible = await page.locator('#adminPanel').isVisible();
+    expect(isVisible).toBe(false);
+  });
+
+  test('Subscription price USD $15 is displayed on page', async ({ page }) => {
     const a = new AdminSection(page);
-    await a.scrollToSection();
     await a.expectSubscriptionPriceVisible();
   });
 
-  test('Subscription duration 12 months is shown', async ({ page }) => {
+  test('Subscription duration 12 months is displayed', async ({ page }) => {
     await expect(page.getByText(SUBSCRIPTION.subscriptionMonths, { exact: false })).toBeVisible();
   });
 
-  test('Refresh button is visible', async ({ page }) => {
-    const a = new AdminSection(page);
-    await a.scrollToSection();
-    await a.expectRefreshButtonVisible();
+  test('Refresh admin button (#refreshAdminBtn) is attached', async ({ page }) => {
+    await expect(page.locator('#refreshAdminBtn')).toBeAttached();
   });
 
-  test('Submit Subscription Request button is visible', async ({ page }) => {
-    const a = new AdminSection(page);
-    await a.scrollToSection();
-    await expect(a.submitRequestButton).toBeVisible();
+  test('Admin subscription list (#adminSubList) is attached', async ({ page }) => {
+    await expect(page.locator('#adminSubList')).toBeAttached();
   });
 
-  test('Refund policy text is visible', async ({ page }) => {
+  test('Refund policy text is visible on page', async ({ page }) => {
     await expect(page.getByText('refund', { exact: false })).toBeVisible();
   });
 
@@ -43,22 +46,14 @@ test.describe('Admin — Subscriptions', () => {
     await expect(page.getByText('3 business days', { exact: false })).toBeVisible();
   });
 
-  test('Refresh click does not crash app', async ({ page }) => {
-    const a = new AdminSection(page);
-    await a.scrollToSection();
-    await a.refreshButton.click();
-    await expect(page.getByText('Badminton Tournament', { exact: false }).first()).toBeVisible();
+  // subSubmitBtn lives in subModal (the subscribe modal), which is display:none
+  test('Submit Subscription button (#subSubmitBtn) is attached', async ({ page }) => {
+    await expect(page.locator('#subSubmitBtn')).toBeAttached();
   });
 
-  test('Sign in with Google button is present in admin area', async ({ page }) => {
-    const btns = page.getByRole('button', { name: 'Sign in with Google', exact: false });
+  // Sign-in buttons in historyPanel/statsPanel are always visible
+  test('Sign in with Google button exists on page', async ({ page }) => {
+    const btns = page.locator('#loginFromHistoryBtn, #loginFromStatsBtn');
     expect(await btns.count()).toBeGreaterThanOrEqual(1);
-  });
-
-  test('Submit request click opens form or auth prompt', async ({ page }) => {
-    const a = new AdminSection(page);
-    await a.scrollToSection();
-    await a.submitRequestButton.click();
-    await expect(page.getByText('Badminton Tournament', { exact: false }).first()).toBeVisible();
   });
 });

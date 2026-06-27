@@ -22,9 +22,10 @@ test.describe('Team Assignment', () => {
     await t.expectSectionVisible();
   });
 
-  test('Auto-assign Teams button is visible', async ({ page }) => {
+  // shuffleBtn exists in DOM and is visible (but disabled until players added)
+  test('Auto-assign button (#shuffleBtn) is visible', async ({ page }) => {
     const t = new TeamSection(page);
-    await t.expectAutoAssignVisible();
+    await expect(t.autoAssignButton).toBeVisible();
   });
 
   test('Reshuffle Order button is visible', async ({ page }) => {
@@ -32,93 +33,76 @@ test.describe('Team Assignment', () => {
     await expect(t.reshuffleButton).toBeVisible();
   });
 
-  test('Doubles format option is present', async ({ page }) => {
+  test('Doubles format button is visible', async ({ page }) => {
     const t = new TeamSection(page);
-    await t.scrollToSection();
     await expect(t.doublesButton).toBeVisible();
   });
 
-  test('Singles format option is present', async ({ page }) => {
+  test('Singles format button is visible', async ({ page }) => {
     const t = new TeamSection(page);
-    await t.scrollToSection();
     await expect(t.singlesButton).toBeVisible();
   });
 
-  test('Mixed format option is present', async ({ page }) => {
+  test('Mixed format button is visible', async ({ page }) => {
     const t = new TeamSection(page);
-    await t.scrollToSection();
     await expect(t.mixedButton).toBeVisible();
   });
 
-  test('Random assignment mode option is present', async ({ page }) => {
-    const t = new TeamSection(page);
-    await t.scrollToSection();
-    await expect(page.getByText('Random', { exact: false }).first()).toBeVisible();
+  test('Random mode option is visible', async ({ page }) => {
+    await expect(page.locator('#modeAuto')).toBeVisible();
   });
 
-  test('Manual assignment mode option is present', async ({ page }) => {
-    const t = new TeamSection(page);
-    await t.scrollToSection();
-    await expect(page.getByText('Manual', { exact: false }).first()).toBeVisible();
+  test('Manual mode option is visible', async ({ page }) => {
+    await expect(page.locator('#modeManual')).toBeVisible();
   });
 
-  test('Number of teams input is present', async ({ page }) => {
+  test('Number of teams input (#teamCountInput) is visible', async ({ page }) => {
     const t = new TeamSection(page);
-    await t.scrollToSection();
     await expect(t.numberOfTeamsInput).toBeVisible();
   });
 
-  test('Apply button is present', async ({ page }) => {
+  test('Apply button (#applyTeamCount) is visible', async ({ page }) => {
     const t = new TeamSection(page);
-    await t.scrollToSection();
     await expect(t.applyButton).toBeVisible();
   });
 
-  test('Start Tournament button is visible', async ({ page }) => {
-    const t = new TeamSection(page);
-    await t.scrollToSection();
-    await expect(t.startTournamentButton).toBeVisible();
+  // No separate "Start Tournament" button — shuffleBtn says "Auto-assign & Start"
+  test('Auto-assign & Start button is attached', async ({ page }) => {
+    await expect(page.locator('#shuffleBtn')).toBeAttached();
   });
 
-  test('Clear Teams button is visible', async ({ page }) => {
+  test('Clear Teams button (#clearTeamsBtn) is visible', async ({ page }) => {
     const t = new TeamSection(page);
-    await t.scrollToSection();
     await expect(t.clearTeamsButton).toBeVisible();
   });
 
-  test('Doubles format can be selected', async ({ page }) => {
+  test('Doubles format button is clickable', async ({ page }) => {
     const t = new TeamSection(page);
-    await t.scrollToSection();
-    await t.selectFormat('Doubles');
+    await t.doublesButton.click();
     await expect(t.doublesButton).toBeVisible();
   });
 
-  test('Singles format can be selected', async ({ page }) => {
+  test('Singles format button is clickable', async ({ page }) => {
     const t = new TeamSection(page);
-    await t.scrollToSection();
-    await t.selectFormat('Singles');
+    await t.singlesButton.click();
     await expect(t.singlesButton).toBeVisible();
   });
 
-  test('Mixed format can be selected', async ({ page }) => {
+  test('Mixed format button is clickable', async ({ page }) => {
     const t = new TeamSection(page);
-    await t.scrollToSection();
-    await t.selectFormat('Mixed');
+    await t.mixedButton.click();
     await expect(t.mixedButton).toBeVisible();
   });
 
-  test('number of teams input accepts numeric value', async ({ page }) => {
+  test('Number of teams input accepts a value', async ({ page }) => {
     const t = new TeamSection(page);
-    await t.scrollToSection();
     await t.numberOfTeamsInput.fill(TEAM_CONFIG.numberOfTeams);
     await expect(t.numberOfTeamsInput).toHaveValue(TEAM_CONFIG.numberOfTeams);
   });
 
-  test('auto-assign teams works after adding minimum players', async ({ page }) => {
+  test('shuffleBtn becomes enabled after adding minimum players', async ({ page }) => {
     await addMinPlayers(page);
     const t = new TeamSection(page);
-    await t.scrollToSection();
-    await t.autoAssignButton.click();
-    await expect(t.sectionHeading).toBeVisible();
+    await expect(t.autoAssignButton).toBeEnabled();
   });
 });

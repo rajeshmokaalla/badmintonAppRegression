@@ -12,14 +12,11 @@ export class PlayerSection extends BasePage {
   constructor(page: Page) {
     super(page);
     this.sectionHeading = page.getByText('1. Players', { exact: false }).first();
-    this.playerInput = page
-      .locator('input[type="text"], input:not([type])')
-      .filter({ hasNot: page.locator('[type="number"]') })
-      .first();
-    this.addButton = page.getByRole('button', { name: 'Add', exact: true }).first();
-    this.clearAllButton = page.getByRole('button', { name: 'Clear All', exact: false }).first();
-    this.pointsSelector = page.locator('select').first();
-    this.emptyState = page.getByText('No players added yet', { exact: false });
+    this.playerInput = page.locator('#playerInput');
+    this.addButton = page.locator('#addPlayerBtn');
+    this.clearAllButton = page.locator('#clearPlayersBtn');
+    this.pointsSelector = page.locator('#pointsInput');
+    this.emptyState = page.locator('#playerEmpty');
   }
 
   async scrollToSection(): Promise<void> {
@@ -45,11 +42,11 @@ export class PlayerSection extends BasePage {
   }
 
   async expectPlayerInList(name: string): Promise<void> {
-    await expect(this.page.getByText(name, { exact: false })).toBeVisible();
+    await expect(this.page.locator('#playerList').getByText(name, { exact: false })).toBeVisible();
   }
 
   async getPlayerListItems(): Promise<Locator> {
-    return this.page.locator('ul li').filter({ hasText: /[A-Za-z]/ });
+    return this.page.locator('#playerList li');
   }
 
   async expectSectionVisible(): Promise<void> {

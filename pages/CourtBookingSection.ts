@@ -1,12 +1,17 @@
 import { Page, Locator, expect } from '@playwright/test';
 import { BasePage } from './BasePage';
 
+// courtPanel is auth-gated: style="display:none" for unauthenticated users.
+// All elements inside it are attached to DOM but not visible.
+// Tests use toBeAttached() for presence checks and toBeVisible() only for
+// elements that are guaranteed visible when the panel is open.
 export class CourtBookingSection extends BasePage {
-  readonly sectionHeading: Locator;
+  readonly courtPanel: Locator;
   readonly groupMembersHeading: Locator;
   readonly addBookingHeading: Locator;
   readonly expensesHeading: Locator;
   readonly splitSummaryHeading: Locator;
+  readonly addMemberButton: Locator;
   readonly addBookingButton: Locator;
   readonly addExpenseButton: Locator;
   readonly loadButton: Locator;
@@ -18,44 +23,31 @@ export class CourtBookingSection extends BasePage {
 
   constructor(page: Page) {
     super(page);
-    this.sectionHeading = page.getByText('Court Booking', { exact: false }).first();
-    this.groupMembersHeading = page.getByText('Group Members', { exact: false }).first();
-    this.addBookingHeading = page.getByText('Add Court Booking', { exact: false }).first();
-    this.expensesHeading = page.getByText('Other Expenses', { exact: false }).first();
-    this.splitSummaryHeading = page.getByText('Split Summary', { exact: false }).first();
-    this.addBookingButton = page.getByRole('button', { name: 'Add Booking', exact: false });
-    this.addExpenseButton = page.getByRole('button', { name: 'Add Expense', exact: false });
-    this.loadButton = page.getByRole('button', { name: 'Load', exact: false });
-    this.settleResetButton = page.getByRole('button', { name: 'Mark as Settled', exact: false });
-    this.shuttleButton = page.getByRole('button', { name: 'Shuttle', exact: false });
-    this.snacksButton = page.getByRole('button', { name: 'Snacks', exact: false });
-    this.miscButton = page.getByRole('button', { name: 'Miscellaneous', exact: false });
-    this.noMembersState = page.getByText('No members yet', { exact: false });
+    this.courtPanel = page.locator('#courtPanel');
+    this.groupMembersHeading = page.locator('#courtPanel').getByText('Group Members', { exact: false });
+    this.addBookingHeading = page.locator('#courtPanel').getByText('Add Court Booking', { exact: false });
+    this.expensesHeading = page.locator('#courtPanel').getByText('Other Expenses', { exact: false });
+    this.splitSummaryHeading = page.locator('#courtPanel').getByText('Split Summary', { exact: false });
+    this.addMemberButton = page.locator('#cbAddMemberBtn');
+    this.addBookingButton = page.locator('#cbAddBookingBtn');
+    this.addExpenseButton = page.locator('#cbAddExpBtn');
+    this.loadButton = page.locator('#cbLoadMonthBtn');
+    this.settleResetButton = page.locator('#cbSettleBtn');
+    this.shuttleButton = page.locator('#cbExpType');
+    this.snacksButton = page.locator('#courtPanel').getByRole('button', { name: 'Snacks', exact: false });
+    this.miscButton = page.locator('#courtPanel').getByRole('button', { name: 'Miscellaneous', exact: false });
+    this.noMembersState = page.locator('#cbMemberEmpty');
   }
 
-  async scrollToSection(): Promise<void> {
-    await this.sectionHeading.scrollIntoViewIfNeeded();
+  async expectCourtPanelAttached(): Promise<void> {
+    await expect(this.courtPanel).toBeAttached();
   }
 
-  async expectSectionVisible(): Promise<void> {
-    await expect(this.sectionHeading).toBeVisible();
-  }
-
-  async expectGroupMembersSectionVisible(): Promise<void> {
-    await expect(this.groupMembersHeading).toBeVisible();
-  }
-
-  async expectExpenseCategoryButtonsVisible(): Promise<void> {
-    await expect(this.shuttleButton).toBeVisible();
-    await expect(this.snacksButton).toBeVisible();
-    await expect(this.miscButton).toBeVisible();
-  }
-
-  async expectSplitSummaryVisible(): Promise<void> {
-    await expect(this.splitSummaryHeading).toBeVisible();
-  }
-
-  async expectNoMembersState(): Promise<void> {
-    await expect(this.noMembersState).toBeVisible();
+  async expectSectionElementsAttached(): Promise<void> {
+    await expect(this.addMemberButton).toBeAttached();
+    await expect(this.addBookingButton).toBeAttached();
+    await expect(this.addExpenseButton).toBeAttached();
+    await expect(this.loadButton).toBeAttached();
+    await expect(this.settleResetButton).toBeAttached();
   }
 }

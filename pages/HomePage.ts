@@ -8,27 +8,22 @@ export class HomePage extends BasePage {
   constructor(page: Page) {
     super(page);
     this.appTitle = page.getByText('Badminton Tournament', { exact: false }).first();
-    this.installAppLink = page.getByText('Install app', { exact: false });
+    this.installAppLink = page.locator('#installBtn');
   }
 
   async expectAppLoaded(): Promise<void> {
     await expect(this.appTitle).toBeVisible();
   }
 
+  // Only sections that are always visible (no auth required)
   async expectAllSectionHeadingsPresent(): Promise<void> {
-    const headings = [
-      '1. Players',
-      '2. Teams',
-      '3. Matches',
-      '4. Standings',
-      '5. Save to Cloud',
-      'Player Stats',
-      'Court Booking',
-      'Contact Us',
-    ];
-    for (const h of headings) {
+    const alwaysVisible = ['1. Players', '2. Teams', '3. Matches', '4. Standings'];
+    for (const h of alwaysVisible) {
       await expect(this.page.getByText(h, { exact: false }).first()).toBeVisible();
     }
+    // Auth-gated panels exist in DOM but may be display:none
+    await expect(this.page.locator('#cloudPanel')).toBeAttached();
+    await expect(this.page.locator('#courtPanel')).toBeAttached();
   }
 
   async getPageTitle(): Promise<string> {

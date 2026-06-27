@@ -7,12 +7,12 @@ test.describe('Player Statistics', () => {
     await page.waitForLoadState('networkidle');
   });
 
-  test('Player Stats section heading is visible', async ({ page }) => {
+  test('statsPanel (#statsPanel) is visible', async ({ page }) => {
     const s = new StatsSection(page);
     await s.expectSectionVisible();
   });
 
-  test('Load Stats button is visible', async ({ page }) => {
+  test('Load Stats button (#loadStatsBtn) is visible', async ({ page }) => {
     const s = new StatsSection(page);
     await s.scrollToSection();
     await s.expectLoadStatsButtonVisible();
@@ -30,6 +30,10 @@ test.describe('Player Statistics', () => {
     await expect(s.loadStatsButton).toBeEnabled();
   });
 
+  test('Clear Stats button (#clearStatsBtn) is attached', async ({ page }) => {
+    await expect(page.locator('#clearStatsBtn')).toBeAttached();
+  });
+
   test('Load Stats click does not crash app', async ({ page }) => {
     const s = new StatsSection(page);
     await s.scrollToSection();
@@ -37,16 +41,7 @@ test.describe('Player Statistics', () => {
     await expect(page.getByText('Badminton Tournament', { exact: false }).first()).toBeVisible();
   });
 
-  test('Clear button is present in stats section', async ({ page }) => {
-    const s = new StatsSection(page);
-    await s.scrollToSection();
-    const clearBtns = page.getByRole('button', { name: 'Clear', exact: false });
-    if (await clearBtns.count() > 0) {
-      await expect(clearBtns.first()).toBeVisible();
-    }
-  });
-
-  test('Stats section remains stable after load click', async ({ page }) => {
+  test('statsPanel remains stable after load click', async ({ page }) => {
     const s = new StatsSection(page);
     await s.scrollToSection();
     await s.loadStatsButton.click();

@@ -28,29 +28,31 @@ test.describe('Tournament Flow', () => {
     await t.expectStandingsSectionVisible();
   });
 
-  test('Undo Last Edit button is visible', async ({ page }) => {
+  test('Undo button (#undoBtn) is visible', async ({ page }) => {
     const t = new TournamentSection(page);
     await t.expectUndoButtonVisible();
   });
 
-  test('Export button is visible', async ({ page }) => {
+  test('Export button (#exportBtn) is visible', async ({ page }) => {
     const t = new TournamentSection(page);
     await t.expectExportButtonVisible();
   });
 
-  test('Play Again button is visible', async ({ page }) => {
+  // playAgainBtn is display:none until tournament ends — check DOM presence only
+  test('Play Again button (#playAgainBtn) is attached to DOM', async ({ page }) => {
     const t = new TournamentSection(page);
-    await expect(t.playAgainButton).toBeVisible();
+    await t.expectPlayAgainButtonAttached();
   });
 
-  test('Reset Tournament button is visible', async ({ page }) => {
+  test('Reset button (#resetBtn) is visible', async ({ page }) => {
     const t = new TournamentSection(page);
     await expect(t.resetButton).toBeVisible();
   });
 
-  test('Save Tournament button is visible', async ({ page }) => {
+  // saveCloudBtn lives inside cloudPanel which is display:none until tournament completes
+  test('Save Tournament button (#saveCloudBtn) is attached to DOM', async ({ page }) => {
     const t = new TournamentSection(page);
-    await t.expectSaveTournamentButtonVisible();
+    await t.expectSaveTournamentButtonAttached();
   });
 
   test('Export button is enabled', async ({ page }) => {
@@ -58,35 +60,32 @@ test.describe('Tournament Flow', () => {
     await expect(t.exportButton).toBeEnabled();
   });
 
-  test('Undo click does not crash the app', async ({ page }) => {
+  test('Undo click does not crash app', async ({ page }) => {
     const t = new TournamentSection(page);
     await t.undoButton.click();
     await expect(t.matchesHeading).toBeVisible();
   });
 
-  test('Reset Tournament keeps app stable', async ({ page }) => {
+  test('Reset click does not crash app', async ({ page }) => {
     const t = new TournamentSection(page);
     await t.resetButton.click();
     await expect(page.getByText('Badminton Tournament', { exact: false }).first()).toBeVisible();
   });
 
-  test('Play Again click keeps app stable', async ({ page }) => {
-    const t = new TournamentSection(page);
-    await t.playAgainButton.click();
-    await expect(page.getByText('Badminton Tournament', { exact: false }).first()).toBeVisible();
+  test('cloudPanel is display:none before tournament completes', async ({ page }) => {
+    await expect(page.locator('#cloudPanel')).toBeAttached();
+    const isVisible = await page.locator('#cloudPanel').isVisible();
+    expect(isVisible).toBe(false);
   });
 
-  test('Start Tournament after player setup keeps app stable', async ({ page }) => {
+  test('shuffleBtn becomes enabled after players are added', async ({ page }) => {
     await setupWithPlayers(page);
-    const teams = new TeamSection(page);
-    await teams.scrollToSection();
-    await teams.autoAssignButton.click();
-    await teams.startTournamentButton.click();
-    const t = new TournamentSection(page);
-    await expect(t.matchesHeading).toBeVisible();
+    await expect(page.locator('#shuffleBtn')).toBeEnabled();
   });
 
-  test('Save to Cloud section is visible after tournament setup', async ({ page }) => {
-    await expect(page.getByText('5. Save to Cloud', { exact: false }).first()).toBeVisible();
+  test('shuffleBtn click with players runs without crash', async ({ page }) => {
+    await setupWithPlayers(page);
+    await page.locator('#shuffleBtn').click();
+    await expect(page.getByText('Badminton Tournament', { exact: false }).first()).toBeVisible();
   });
 });

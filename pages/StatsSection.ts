@@ -8,8 +8,8 @@ export class StatsSection extends BasePage {
 
   constructor(page: Page) {
     super(page);
-    this.sectionHeading = page.getByText('Player Stats', { exact: false }).first();
-    this.loadStatsButton = page.getByRole('button', { name: 'Load Stats', exact: false });
+    this.sectionHeading = page.locator('#statsPanel');
+    this.loadStatsButton = page.locator('#loadStatsBtn');
     this.lifetimeStatsText = page.getByText('Lifetime stats', { exact: false });
   }
 

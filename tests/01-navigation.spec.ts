@@ -24,9 +24,20 @@ test.describe('Navigation & Layout', () => {
     await home.expectAppLoaded();
   });
 
-  test('all primary section headings are present', async ({ page }) => {
-    const home = new HomePage(page);
-    await home.expectAllSectionHeadingsPresent();
+  // Only sections always visible without auth
+  test('always-visible section headings are present', async ({ page }) => {
+    const always = ['1. Players', '2. Teams', '3. Matches', '4. Standings', 'Player Stats', 'Contact Us'];
+    for (const h of always) {
+      await expect(page.getByText(h, { exact: false }).first()).toBeVisible();
+    }
+  });
+
+  // Auth-gated sections exist in DOM but are display:none
+  test('auth-gated sections are attached to DOM', async ({ page }) => {
+    await expect(page.locator('#cloudPanel')).toBeAttached();
+    await expect(page.locator('#courtPanel')).toBeAttached();
+    await expect(page.locator('#adminPanel')).toBeAttached();
+    await expect(page.locator('#subModal')).toBeAttached();
   });
 
   test('Players section (1) is visible', async ({ page }) => {
@@ -45,32 +56,37 @@ test.describe('Navigation & Layout', () => {
     await expect(page.getByText('4. Standings', { exact: false }).first()).toBeVisible();
   });
 
-  test('Save to Cloud section (5) is visible', async ({ page }) => {
-    await expect(page.getByText('5. Save to Cloud', { exact: false }).first()).toBeVisible();
+  // cloudPanel is display:none until tournament completes — check DOM presence
+  test('Save to Cloud section (5) is attached to DOM', async ({ page }) => {
+    await expect(page.locator('#cloudPanel')).toBeAttached();
+    const heading = page.locator('#cloudPanel').getByText('Save to Cloud', { exact: false });
+    await expect(heading).toBeAttached();
   });
 
-  test('Past Tournaments section is present', async ({ page }) => {
-    await expect(page.getByText('Past Tournaments', { exact: false }).first()).toBeVisible();
+  test('Past Tournaments section is visible', async ({ page }) => {
+    await expect(page.locator('#historyPanel')).toBeVisible();
   });
 
-  test('Player Stats section is present', async ({ page }) => {
-    await expect(page.getByText('Player Stats', { exact: false }).first()).toBeVisible();
+  test('Player Stats section is visible', async ({ page }) => {
+    await expect(page.locator('#statsPanel')).toBeVisible();
   });
 
-  test('Court Booking section is present', async ({ page }) => {
-    await expect(page.getByText('Court Booking', { exact: false }).first()).toBeVisible();
+  // courtPanel is display:none (auth-gated) — check DOM presence
+  test('Court Booking section is attached to DOM', async ({ page }) => {
+    await expect(page.locator('#courtPanel')).toBeAttached();
   });
 
-  test('Contact Us section is present', async ({ page }) => {
+  test('Contact Us section is visible', async ({ page }) => {
     await expect(page.getByText('Contact Us', { exact: false }).first()).toBeVisible();
   });
 
-  test('Privacy Notice section is present', async ({ page }) => {
+  test('Privacy Notice section is visible', async ({ page }) => {
     await expect(page.getByText('Privacy Notice', { exact: false }).first()).toBeVisible();
   });
 
-  test('Unlock Unlimited Saves section is present', async ({ page }) => {
-    await expect(page.getByText('Unlock Unlimited Saves', { exact: false }).first()).toBeVisible();
+  // subModal (Unlock Unlimited Saves) is display:none — check DOM presence
+  test('Unlock Unlimited Saves modal is attached to DOM', async ({ page }) => {
+    await expect(page.locator('#subModal')).toBeAttached();
   });
 
   test('Install app link is visible', async ({ page }) => {
@@ -78,8 +94,9 @@ test.describe('Navigation & Layout', () => {
     await home.expectInstallLinkPresent();
   });
 
+  // Only check always-visible sections for vertical order
   test('numbered sections appear in correct vertical order', async ({ page }) => {
-    const labels = ['1. Players', '2. Teams', '3. Matches', '4. Standings', '5. Save to Cloud'];
+    const labels = ['1. Players', '2. Teams', '3. Matches', '4. Standings'];
     const yPositions: number[] = [];
     for (const label of labels) {
       const el = page.getByText(label, { exact: false }).first();

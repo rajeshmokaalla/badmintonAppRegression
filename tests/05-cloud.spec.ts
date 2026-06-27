@@ -7,51 +7,62 @@ test.describe('Cloud Features', () => {
     await page.waitForLoadState('networkidle');
   });
 
-  test('Save to Cloud section heading is visible', async ({ page }) => {
+  // cloudPanel is display:none until tournament is complete
+  test('cloudPanel (#cloudPanel) is attached to DOM', async ({ page }) => {
     const c = new CloudSection(page);
-    await c.expectCloudSectionVisible();
+    await c.expectCloudPanelAttached();
   });
 
-  test('Sign in with Google button is visible', async ({ page }) => {
-    const c = new CloudSection(page);
-    await c.expectSignInButtonVisible();
+  test('cloudPanel is initially hidden (display:none)', async ({ page }) => {
+    const isVisible = await page.locator('#cloudPanel').isVisible();
+    expect(isVisible).toBe(false);
   });
 
-  test('Past Tournaments section is visible', async ({ page }) => {
+  // historyPanel is always visible
+  test('Past Tournaments section (#historyPanel) is visible', async ({ page }) => {
     const c = new CloudSection(page);
     await c.expectPastTournamentsSectionVisible();
   });
 
-  test('Unlock Unlimited Saves section is visible', async ({ page }) => {
-    const c = new CloudSection(page);
-    await c.expectUnlockSectionVisible();
+  // statsPanel is always visible
+  test('Player Stats section (#statsPanel) is visible', async ({ page }) => {
+    await expect(page.locator('#statsPanel')).toBeVisible();
   });
 
-  test('Sign in button is enabled before authentication', async ({ page }) => {
+  // Sign-in buttons inside historyPanel/statsPanel are always visible
+  test('Sign in with Google button in history panel is visible', async ({ page }) => {
     const c = new CloudSection(page);
-    await expect(c.signInButton).toBeEnabled();
+    await c.expectSignInButtonVisible();
   });
 
-  test('clicking Sign in with Google does not crash app', async ({ page }) => {
+  test('Sign in with Google button in stats panel is visible', async ({ page }) => {
+    const c = new CloudSection(page);
+    await expect(c.signInFromStatsButton).toBeVisible();
+  });
+
+  // subModal (Unlock Unlimited Saves) is display:none — DOM presence only
+  test('Unlock Unlimited Saves modal (#subModal) is attached to DOM', async ({ page }) => {
+    const c = new CloudSection(page);
+    await c.expectUnlockSectionAttached();
+  });
+
+  test('clicking Sign in from history does not crash app', async ({ page }) => {
     const c = new CloudSection(page);
     const [popup] = await Promise.all([
       page.waitForEvent('popup', { timeout: 5000 }).catch(() => null),
-      c.signInButton.click(),
+      c.signInFromHistoryButton.click(),
     ]);
     await expect(page.getByText('Badminton Tournament', { exact: false }).first()).toBeVisible();
     if (popup) await popup.close();
   });
 
-  test('Supabase is mentioned as cloud sync provider', async ({ page }) => {
-    await expect(page.getByText('Supabase', { exact: false })).toBeVisible();
+  // Footer "Saved automatically in your browser · Cloud sync via Supabase" is always visible
+  test('footer mentions Supabase cloud sync', async ({ page }) => {
+    await expect(page.locator('.footer-note')).toBeVisible();
+    await expect(page.locator('.footer-note')).toContainText('Supabase');
   });
 
-  test('Saved automatically text is visible', async ({ page }) => {
-    await expect(page.getByText('Saved automatically', { exact: false })).toBeVisible();
-  });
-
-  test('at least one Sign in with Google button exists on page', async ({ page }) => {
-    const btns = page.getByRole('button', { name: 'Sign in with Google', exact: false });
-    expect(await btns.count()).toBeGreaterThanOrEqual(1);
+  test('footer says Saved automatically', async ({ page }) => {
+    await expect(page.locator('.footer-note')).toContainText('Saved automatically');
   });
 });

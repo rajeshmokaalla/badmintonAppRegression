@@ -1,118 +1,88 @@
 import { test, expect } from '@playwright/test';
 import { CourtBookingSection } from '../pages/CourtBookingSection';
 
+// courtPanel is auth-gated (display:none). All tests verify DOM presence
+// (toBeAttached) rather than visual visibility. Interactive tests are skipped.
+
 test.describe('Court Booking & Split', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('https://rajeshmokaalla.github.io/badminton-tournament/');
     await page.waitForLoadState('networkidle');
   });
 
-  test('Court Booking & Split section heading is visible', async ({ page }) => {
+  test('courtPanel (#courtPanel) is attached to DOM', async ({ page }) => {
     const b = new CourtBookingSection(page);
-    await b.expectSectionVisible();
+    await b.expectCourtPanelAttached();
   });
 
-  test('Group Members sub-section is visible', async ({ page }) => {
-    const b = new CourtBookingSection(page);
-    await b.expectGroupMembersSectionVisible();
+  test('courtPanel is initially hidden for unauthenticated users', async ({ page }) => {
+    const isVisible = await page.locator('#courtPanel').isVisible();
+    expect(isVisible).toBe(false);
   });
 
-  test('Add Court Booking sub-section heading is visible', async ({ page }) => {
-    const b = new CourtBookingSection(page);
-    await expect(b.addBookingHeading).toBeVisible();
+  test('Court Booking heading is inside courtPanel', async ({ page }) => {
+    const heading = page.locator('#courtPanel').getByText('Court Booking', { exact: false });
+    await expect(heading).toBeAttached();
   });
 
-  test('Other Expenses sub-section heading is visible', async ({ page }) => {
+  test('Group Members heading is inside courtPanel', async ({ page }) => {
     const b = new CourtBookingSection(page);
-    await expect(b.expensesHeading).toBeVisible();
+    await expect(b.groupMembersHeading).toBeAttached();
   });
 
-  test('Split Summary sub-section heading is visible', async ({ page }) => {
+  test('Add Court Booking heading is inside courtPanel', async ({ page }) => {
     const b = new CourtBookingSection(page);
-    await b.expectSplitSummaryVisible();
+    await expect(b.addBookingHeading).toBeAttached();
   });
 
-  test('No members yet state shown initially', async ({ page }) => {
+  test('Other Expenses heading is inside courtPanel', async ({ page }) => {
     const b = new CourtBookingSection(page);
-    await b.scrollToSection();
-    await b.expectNoMembersState();
+    await expect(b.expensesHeading).toBeAttached();
   });
 
-  test('Shuttle expense category button is visible', async ({ page }) => {
+  test('Split Summary heading is inside courtPanel', async ({ page }) => {
     const b = new CourtBookingSection(page);
-    await b.scrollToSection();
-    await expect(b.shuttleButton).toBeVisible();
+    await expect(b.splitSummaryHeading).toBeAttached();
   });
 
-  test('Snacks expense category button is visible', async ({ page }) => {
-    const b = new CourtBookingSection(page);
-    await b.scrollToSection();
-    await expect(b.snacksButton).toBeVisible();
+  test('Add Member button (#cbAddMemberBtn) is attached', async ({ page }) => {
+    await expect(page.locator('#cbAddMemberBtn')).toBeAttached();
   });
 
-  test('Miscellaneous expense category button is visible', async ({ page }) => {
-    const b = new CourtBookingSection(page);
-    await b.scrollToSection();
-    await expect(b.miscButton).toBeVisible();
+  test('Add Booking button (#cbAddBookingBtn) is attached', async ({ page }) => {
+    await expect(page.locator('#cbAddBookingBtn')).toBeAttached();
   });
 
-  test('Add Booking button is visible', async ({ page }) => {
-    const b = new CourtBookingSection(page);
-    await b.scrollToSection();
-    await expect(b.addBookingButton).toBeVisible();
+  test('Add Expense button (#cbAddExpBtn) is attached', async ({ page }) => {
+    await expect(page.locator('#cbAddExpBtn')).toBeAttached();
   });
 
-  test('Add Expense button is visible', async ({ page }) => {
-    const b = new CourtBookingSection(page);
-    await b.scrollToSection();
-    await expect(b.addExpenseButton).toBeVisible();
+  test('Load month button (#cbLoadMonthBtn) is attached', async ({ page }) => {
+    await expect(page.locator('#cbLoadMonthBtn')).toBeAttached();
   });
 
-  test('Load button is visible in Split Summary', async ({ page }) => {
-    const b = new CourtBookingSection(page);
-    await b.scrollToSection();
-    await expect(b.loadButton).toBeVisible();
+  test('Settle & Reset button (#cbSettleBtn) is attached', async ({ page }) => {
+    await expect(page.locator('#cbSettleBtn')).toBeAttached();
   });
 
-  test('Mark as Settled & Reset button is visible', async ({ page }) => {
-    const b = new CourtBookingSection(page);
-    await b.scrollToSection();
-    await expect(b.settleResetButton).toBeVisible();
+  test('No members yet state (#cbMemberEmpty) is attached', async ({ page }) => {
+    await expect(page.locator('#cbMemberEmpty')).toBeAttached();
   });
 
-  test('all expense category buttons are enabled', async ({ page }) => {
-    const b = new CourtBookingSection(page);
-    await b.scrollToSection();
-    await expect(b.shuttleButton).toBeEnabled();
-    await expect(b.snacksButton).toBeEnabled();
-    await expect(b.miscButton).toBeEnabled();
+  test('Expense type selector (#cbExpType) is attached', async ({ page }) => {
+    await expect(page.locator('#cbExpType')).toBeAttached();
   });
 
-  test('Shuttle category button is clickable', async ({ page }) => {
-    const b = new CourtBookingSection(page);
-    await b.scrollToSection();
-    await b.shuttleButton.click();
-    await expect(b.shuttleButton).toBeVisible();
+  test('Member name input (#cbMemberInput) is attached', async ({ page }) => {
+    await expect(page.locator('#cbMemberInput')).toBeAttached();
   });
 
-  test('Snacks category button is clickable', async ({ page }) => {
-    const b = new CourtBookingSection(page);
-    await b.scrollToSection();
-    await b.snacksButton.click();
-    await expect(b.snacksButton).toBeVisible();
+  test('Booking amount input (#cbAmount) is attached', async ({ page }) => {
+    await expect(page.locator('#cbAmount')).toBeAttached();
   });
 
-  test('Miscellaneous category button is clickable', async ({ page }) => {
+  test('all core court booking elements present in DOM', async ({ page }) => {
     const b = new CourtBookingSection(page);
-    await b.scrollToSection();
-    await b.miscButton.click();
-    await expect(b.miscButton).toBeVisible();
-  });
-
-  test('clicking Add Booking without auth keeps app stable', async ({ page }) => {
-    const b = new CourtBookingSection(page);
-    await b.scrollToSection();
-    await b.addBookingButton.click();
-    await expect(page.getByText('Badminton Tournament', { exact: false }).first()).toBeVisible();
+    await b.expectSectionElementsAttached();
   });
 });
