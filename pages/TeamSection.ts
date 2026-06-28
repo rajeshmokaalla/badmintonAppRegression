@@ -12,6 +12,7 @@ export class TeamSection extends BasePage {
   readonly numberOfTeamsInput: Locator;
   readonly applyButton: Locator;
   readonly clearTeamsButton: Locator;
+  readonly newRoundButton: Locator;
 
   constructor(page: Page) {
     super(page);
@@ -24,6 +25,7 @@ export class TeamSection extends BasePage {
     this.numberOfTeamsInput = page.locator('#teamCountInput');
     this.applyButton = page.locator('#applyTeamCount');
     this.clearTeamsButton = page.locator('#clearTeamsBtn');
+    this.newRoundButton = page.locator('#newRoundBtn');
   }
 
   async scrollToSection(): Promise<void> {

@@ -9,26 +9,41 @@ test.describe('PWA & Service Worker', () => {
     await expect(page.locator('link[rel="manifest"]')).toHaveCount(1);
   });
 
-  test('manifest.webmanifest file returns 200', async ({ request }) => {
-    const response = await request.get(`${BASE_URL}manifest.webmanifest`);
-    expect(response.status()).toBe(200);
+  // Use page.evaluate(fetch) instead of request.get() — Firefox treats .webmanifest as a download
+  // when accessed via Playwright's request API, causing "Download is starting" errors.
+  test('manifest.webmanifest file returns 200', async ({ page }) => {
+    await page.goto(BASE_URL);
+    const status = await page.evaluate(async () => {
+      const r = await fetch('./manifest.webmanifest');
+      return r.status;
+    });
+    expect(status).toBe(200);
   });
 
-  test('manifest contains required name field', async ({ request }) => {
-    const response = await request.get(`${BASE_URL}manifest.webmanifest`);
-    const manifest = await response.json();
+  test('manifest contains required name field', async ({ page }) => {
+    await page.goto(BASE_URL);
+    const manifest = await page.evaluate(async () => {
+      const r = await fetch('./manifest.webmanifest');
+      return r.json();
+    });
     expect(manifest.name || manifest.short_name).toBeTruthy();
   });
 
-  test('manifest contains start_url', async ({ request }) => {
-    const response = await request.get(`${BASE_URL}manifest.webmanifest`);
-    const manifest = await response.json();
+  test('manifest contains start_url', async ({ page }) => {
+    await page.goto(BASE_URL);
+    const manifest = await page.evaluate(async () => {
+      const r = await fetch('./manifest.webmanifest');
+      return r.json();
+    });
     expect(manifest.start_url).toBeTruthy();
   });
 
-  test('manifest contains display mode', async ({ request }) => {
-    const response = await request.get(`${BASE_URL}manifest.webmanifest`);
-    const manifest = await response.json();
+  test('manifest contains display mode', async ({ page }) => {
+    await page.goto(BASE_URL);
+    const manifest = await page.evaluate(async () => {
+      const r = await fetch('./manifest.webmanifest');
+      return r.json();
+    });
     expect(manifest.display).toBeTruthy();
   });
 

@@ -109,4 +109,14 @@ test.describe('Team Assignment', () => {
     const t = new TeamSection(page);
     await expect(t.autoAssignButton).toBeEnabled();
   });
+
+  test('Next Phase button (#newRoundBtn) is visible', async ({ page }) => {
+    const t = new TeamSection(page);
+    await expect(t.newRoundButton).toBeVisible();
+  });
+
+  test('Next Phase button is disabled before tournament starts', async ({ page }) => {
+    const t = new TeamSection(page);
+    await expect(t.newRoundButton).toBeDisabled();
+  });
 });
