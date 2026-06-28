@@ -14,7 +14,17 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        browser: [chromium, firefox, webkit]
+        include:
+          - browser: chromium
+            engine: chromium
+          - browser: firefox
+            engine: firefox
+          - browser: webkit
+            engine: webkit
+          - browser: mobile-chrome
+            engine: chromium
+          - browser: mobile-safari
+            engine: webkit
     name: Tests — ${{ matrix.browser }}
     steps:
       - uses: actions/checkout@v4
@@ -35,7 +45,7 @@ jobs:
         run: npm install
 
       - name: Install Playwright browsers
-        run: npx playwright install --with-deps ${{ matrix.browser }}
+        run: npx playwright install --with-deps ${{ matrix.engine }}
 
       - name: Run Playwright tests
         run: npx playwright test --project=${{ matrix.browser }}
@@ -45,37 +55,6 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: playwright-report-${{ matrix.browser }}
-          path: |
-            playwright-report/
-            test-results/
-          retention-days: 30
-
-  mobile-tests:
-    timeout-minutes: 60
-    runs-on: ubuntu-latest
-    name: Tests — Mobile
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '22'
-
-      - name: Install dependencies
-        run: npm install
-
-      - name: Install Playwright browsers
-        run: npx playwright install --with-deps chromium webkit
-
-      - name: Run mobile tests
-        run: npx playwright test --project=mobile-chrome --project=mobile-safari
-
-      - name: Upload mobile results
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: playwright-report-mobile
           path: |
             playwright-report/
             test-results/
