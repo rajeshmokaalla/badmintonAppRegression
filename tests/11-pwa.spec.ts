@@ -9,29 +9,26 @@ test.describe('PWA & Service Worker', () => {
     await expect(page.locator('link[rel="manifest"]')).toHaveCount(1);
   });
 
-  test('manifest.webmanifest file returns 200', async ({ page }) => {
-    const response = await page.goto(`${BASE_URL}manifest.webmanifest`);
-    expect(response?.status()).toBe(200);
+  test('manifest.webmanifest file returns 200', async ({ request }) => {
+    const response = await request.get(`${BASE_URL}manifest.webmanifest`);
+    expect(response.status()).toBe(200);
   });
 
-  test('manifest contains required name field', async ({ page }) => {
-    const response = await page.goto(`${BASE_URL}manifest.webmanifest`);
-    const body = await response?.text();
-    const manifest = JSON.parse(body ?? '{}');
+  test('manifest contains required name field', async ({ request }) => {
+    const response = await request.get(`${BASE_URL}manifest.webmanifest`);
+    const manifest = await response.json();
     expect(manifest.name || manifest.short_name).toBeTruthy();
   });
 
-  test('manifest contains start_url', async ({ page }) => {
-    const response = await page.goto(`${BASE_URL}manifest.webmanifest`);
-    const body = await response?.text();
-    const manifest = JSON.parse(body ?? '{}');
+  test('manifest contains start_url', async ({ request }) => {
+    const response = await request.get(`${BASE_URL}manifest.webmanifest`);
+    const manifest = await response.json();
     expect(manifest.start_url).toBeTruthy();
   });
 
-  test('manifest contains display mode', async ({ page }) => {
-    const response = await page.goto(`${BASE_URL}manifest.webmanifest`);
-    const body = await response?.text();
-    const manifest = JSON.parse(body ?? '{}');
+  test('manifest contains display mode', async ({ request }) => {
+    const response = await request.get(`${BASE_URL}manifest.webmanifest`);
+    const manifest = await response.json();
     expect(manifest.display).toBeTruthy();
   });
 

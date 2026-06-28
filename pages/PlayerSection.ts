@@ -47,7 +47,7 @@ export class PlayerSection extends BasePage {
   }
 
   async getPlayerListItems(): Promise<Locator> {
-    return this.page.locator('#playerList li');
+    return this.page.locator('#playerList .pill');
   }
 
   async expectSectionVisible(): Promise<void> {
