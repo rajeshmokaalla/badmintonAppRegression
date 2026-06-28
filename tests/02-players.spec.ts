@@ -127,9 +127,9 @@ test.describe('Player Management', () => {
   test('player list gains items after each addition', async ({ page }) => {
     const p = new PlayerSection(page);
     await p.scrollToSection();
-    await p.playerInput.scrollIntoViewIfNeeded();
     await p.addPlayer(PLAYERS.valid[0]);
-    const items = await p.getPlayerListItems();
-    await expect(items.first()).toBeAttached();
+    // Wait for the player name to appear first, then confirm the pill count
+    await p.expectPlayerInList(PLAYERS.valid[0]);
+    await expect(page.locator('#playerList .pill')).toHaveCount(1);
   });
 });
