@@ -16,6 +16,7 @@ export class CourtBookingSection extends BasePage {
   readonly addBookingButton: Locator;
   readonly addExpenseButton: Locator;
   readonly loadButton: Locator;
+  readonly clearMonthButton: Locator;
   readonly splitArea: Locator;
   readonly splitSection: Locator;
   readonly archiveSection: Locator;
@@ -35,6 +36,7 @@ export class CourtBookingSection extends BasePage {
     this.addBookingButton     = page.locator('#cbAddBookingBtn');
     this.addExpenseButton     = page.locator('#cbAddExpBtn');
     this.loadButton           = page.locator('#cbLoadMonthBtn');
+    this.clearMonthButton     = page.locator('#cbClearMonthBtn');
     this.splitArea            = page.locator('#cbSplitArea');
     this.splitSection         = page.locator('#cbSplitSection');
     this.archiveSection       = page.locator('#cbArchiveSection');
@@ -52,6 +54,7 @@ export class CourtBookingSection extends BasePage {
     await expect(this.addBookingButton).toBeAttached();
     await expect(this.addExpenseButton).toBeAttached();
     await expect(this.loadButton).toBeAttached();
+    await expect(this.clearMonthButton).toBeAttached();
     await expect(this.splitSection).toBeAttached();
     await expect(this.archiveSection).toBeAttached();
   }

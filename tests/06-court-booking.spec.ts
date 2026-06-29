@@ -66,6 +66,10 @@ test.describe('Court Booking & Split', () => {
     await expect(page.locator('#cbLoadMonthBtn')).toBeAttached();
   });
 
+  test('Clear month button (#cbClearMonthBtn) is attached', async ({ page }) => {
+    await expect(page.locator('#cbClearMonthBtn')).toBeAttached();
+  });
+
   // #cbSettleBtn no longer exists as a static element — per-member "Mark Settled"
   // buttons are rendered dynamically inside #cbSplitArea when settlements exist.
   // Verify the split area container (static) is attached instead.
