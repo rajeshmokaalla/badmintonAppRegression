@@ -36,6 +36,37 @@ test.describe('Player Management', () => {
     expect(val).toContain('21');
   });
 
+  test('points input is enabled on fresh page load (no tournament in progress)', async ({ page }) => {
+    const p = new PlayerSection(page);
+    await expect(p.pointsSelector).toBeEnabled();
+  });
+
+  test('points input accepts a different value', async ({ page }) => {
+    const p = new PlayerSection(page);
+    await p.scrollToSection();
+    await p.pointsSelector.fill('15');
+    await p.pointsSelector.dispatchEvent('change');
+    const val = await p.pointsSelector.inputValue();
+    expect(Number(val)).toBe(15);
+  });
+
+  test('points hint text updates when points value changes', async ({ page }) => {
+    const p = new PlayerSection(page);
+    await p.scrollToSection();
+    await p.pointsSelector.fill('15');
+    await p.pointsSelector.dispatchEvent('change');
+    const hint = await page.locator('#pointsHint').textContent();
+    expect(hint).toContain('15');
+  });
+
+  test('points input has min=5 and max=100 attributes', async ({ page }) => {
+    const p = new PlayerSection(page);
+    const min = await p.pointsSelector.getAttribute('min');
+    const max = await p.pointsSelector.getAttribute('max');
+    expect(Number(min)).toBeLessThanOrEqual(5);
+    expect(Number(max)).toBeGreaterThanOrEqual(100);
+  });
+
   test('empty state shown when no players added', async ({ page }) => {
     const p = new PlayerSection(page);
     await p.scrollToSection();

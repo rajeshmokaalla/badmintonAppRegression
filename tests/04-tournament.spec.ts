@@ -44,6 +44,18 @@ test.describe('Tournament Flow', () => {
     await t.expectPlayAgainButtonAttached();
   });
 
+  // Play Again is hidden before a tournament completes
+  test('Play Again button is not visible before tournament completes', async ({ page }) => {
+    const isVisible = await page.locator('#playAgainBtn').isVisible();
+    expect(isVisible).toBe(false);
+  });
+
+  // After tournament ends, pointsInput re-enables so Play Again can use different points.
+  // On fresh load (no tournament) the input is already enabled — verify that baseline.
+  test('points input (#pointsInput) is enabled before any tournament starts', async ({ page }) => {
+    await expect(page.locator('#pointsInput')).toBeEnabled();
+  });
+
   test('Reset button (#resetBtn) is visible', async ({ page }) => {
     const t = new TournamentSection(page);
     await expect(t.resetButton).toBeVisible();
