@@ -11,32 +11,36 @@ export class CourtBookingSection extends BasePage {
   readonly addBookingHeading: Locator;
   readonly expensesHeading: Locator;
   readonly splitSummaryHeading: Locator;
+  readonly pastSettlementsHeading: Locator;
   readonly addMemberButton: Locator;
   readonly addBookingButton: Locator;
   readonly addExpenseButton: Locator;
   readonly loadButton: Locator;
-  readonly settleResetButton: Locator;
+  readonly splitArea: Locator;
+  readonly splitSection: Locator;
+  readonly archiveSection: Locator;
+  readonly archiveList: Locator;
   readonly shuttleButton: Locator;
-  readonly snacksButton: Locator;
-  readonly miscButton: Locator;
   readonly noMembersState: Locator;
 
   constructor(page: Page) {
     super(page);
-    this.courtPanel = page.locator('#courtPanel');
-    this.groupMembersHeading = page.locator('#courtPanel').getByText('Group Members', { exact: false });
-    this.addBookingHeading = page.locator('#courtPanel').getByText('Add Court Booking', { exact: false });
-    this.expensesHeading = page.locator('#courtPanel').getByText('Other Expenses', { exact: false });
-    this.splitSummaryHeading = page.locator('#courtPanel').getByText('Split Summary', { exact: false });
-    this.addMemberButton = page.locator('#cbAddMemberBtn');
-    this.addBookingButton = page.locator('#cbAddBookingBtn');
-    this.addExpenseButton = page.locator('#cbAddExpBtn');
-    this.loadButton = page.locator('#cbLoadMonthBtn');
-    this.settleResetButton = page.locator('#cbSettleBtn');
-    this.shuttleButton = page.locator('#cbExpType');
-    this.snacksButton = page.locator('#courtPanel').getByRole('button', { name: 'Snacks', exact: false });
-    this.miscButton = page.locator('#courtPanel').getByRole('button', { name: 'Miscellaneous', exact: false });
-    this.noMembersState = page.locator('#cbMemberEmpty');
+    this.courtPanel           = page.locator('#courtPanel');
+    this.groupMembersHeading  = page.locator('#courtPanel').getByText('Group Members', { exact: false });
+    this.addBookingHeading    = page.locator('#courtPanel').getByText('Add Court Booking', { exact: false });
+    this.expensesHeading      = page.locator('#courtPanel').getByText('Other Expenses', { exact: false });
+    this.splitSummaryHeading  = page.locator('#courtPanel').getByText('Split Summary', { exact: false });
+    this.pastSettlementsHeading = page.locator('#courtPanel').getByText('Past Settlements', { exact: false });
+    this.addMemberButton      = page.locator('#cbAddMemberBtn');
+    this.addBookingButton     = page.locator('#cbAddBookingBtn');
+    this.addExpenseButton     = page.locator('#cbAddExpBtn');
+    this.loadButton           = page.locator('#cbLoadMonthBtn');
+    this.splitArea            = page.locator('#cbSplitArea');
+    this.splitSection         = page.locator('#cbSplitSection');
+    this.archiveSection       = page.locator('#cbArchiveSection');
+    this.archiveList          = page.locator('#cbArchiveList');
+    this.shuttleButton        = page.locator('#cbExpType');
+    this.noMembersState       = page.locator('#cbMemberEmpty');
   }
 
   async expectCourtPanelAttached(): Promise<void> {
@@ -48,6 +52,7 @@ export class CourtBookingSection extends BasePage {
     await expect(this.addBookingButton).toBeAttached();
     await expect(this.addExpenseButton).toBeAttached();
     await expect(this.loadButton).toBeAttached();
-    await expect(this.settleResetButton).toBeAttached();
+    await expect(this.splitSection).toBeAttached();
+    await expect(this.archiveSection).toBeAttached();
   }
 }
